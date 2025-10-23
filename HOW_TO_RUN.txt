@@ -1,0 +1,260 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                   🚀 RUNNING THE AUTOMATION - CHECKLIST                      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+WHAT YOU NEED FROM YOUR END:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ Amazon India Account Credentials
+   ┌────────────────────────────────────────────────────────────────────────┐
+   │ • Email/Mobile number used for Amazon India login                     │
+   │ • Password for your Amazon account                                     │
+   │                                                                        │
+   │ ⚠️  IMPORTANT: Keep these secure!                                      │
+   └────────────────────────────────────────────────────────────────────────┘
+
+2. ✅ Prerequisites Installed
+   ┌────────────────────────────────────────────────────────────────────────┐
+   │ • Python 3.9+ ........................... Check: python --version      │
+   │ • Node.js 16+ ........................... Check: node --version        │
+   │ • wkhtmltopdf (for PDF generation) ...... Download if missing          │
+   └────────────────────────────────────────────────────────────────────────┘
+
+3. ✅ Internet Connection
+   ┌────────────────────────────────────────────────────────────────────────┐
+   │ • Stable internet connection to access Amazon India                    │
+   │ • No VPN issues or firewall blocking Amazon                            │
+   └────────────────────────────────────────────────────────────────────────┘
+
+4. ✅ Time & Patience
+   ┌────────────────────────────────────────────────────────────────────────┐
+   │ • First run: ~5-10 minutes (includes setup)                            │
+   │ • Subsequent runs: ~2-3 minutes                                        │
+   │ • Watch the browser automation (fascinating!)                          │
+   └────────────────────────────────────────────────────────────────────────┘
+
+
+STEP-BY-STEP SETUP & RUN GUIDE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Check Prerequisites
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run in PowerShell:
+   python --version        # Should show 3.9 or higher
+   node --version          # Should show 16 or higher
+   wkhtmltopdf --version   # Check if installed
+
+
+STEP 2: Run Setup Script (Automated Installation)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run in PowerShell:
+   cd "d:\Info\Learn to Evolve team\AI\amazon-order-automation"
+   .\scripts\setup.bat
+
+This will:
+   ✅ Create Python virtual environment
+   ✅ Install all Python dependencies
+   ✅ Install Stagehand AI via npm
+   ✅ Create output directories
+   ✅ Copy .env.example to .env
+
+
+STEP 3: Configure Your Credentials
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Edit the .env file (it's already open in your editor!)
+
+Replace these values:
+   AMAZON_EMAIL=your_email@example.com      ← YOUR AMAZON EMAIL
+   AMAZON_PASSWORD=your_secure_password     ← YOUR AMAZON PASSWORD
+
+Save the file!
+
+
+STEP 4: Install wkhtmltopdf (If Missing)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+If wkhtmltopdf is not installed:
+
+Option A - Using winget:
+   winget install wkhtmltopdf
+
+Option B - Manual Download:
+   1. Go to: https://wkhtmltopdf.org/downloads.html
+   2. Download Windows installer
+   3. Install it
+   4. Restart terminal
+
+
+STEP 5: Run the Automation! 🚀
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run in PowerShell:
+   # Activate virtual environment
+   .\venv\Scripts\activate
+
+   # Run the automation
+   python src\amazon_automation.py
+
+
+WHAT HAPPENS DURING EXECUTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 🌐 Browser Opens (Chrome/Chromium)
+   → You'll see the browser window open
+   → Watch Stagehand AI navigate automatically!
+
+2. 🔐 Automatic Login
+   → Navigates to Amazon India
+   → Clicks "Sign In" button (using AI!)
+   → Enters your email
+   → Enters your password
+   → Completes login
+
+3. 📊 Extract Orders
+   → Navigates to Orders page
+   → Uses AI to extract order details
+   → No brittle selectors - pure AI magic!
+
+4. 📄 Generate Reports
+   → Creates professional PDF report
+   → Saves JSON backup
+   → Takes screenshots
+
+5. ✅ Complete!
+   → Check output/ folder for PDF
+   → Check screenshots/ folder for debug images
+
+
+OUTPUT FILES YOU'LL GET:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 output/
+   └── amazon_orders_report_20251023_HHMMSS.pdf   ← PDF Report
+   └── orders_20251023_HHMMSS.json                ← JSON Data
+
+📁 screenshots/
+   └── 01_homepage.png                             ← Homepage
+   └── 02_login_page.png                           ← Login page
+   └── 03_password_page.png                        ← Password entry
+   └── 04_logged_in.png                            ← After login
+   └── 05_orders_page.png                          ← Orders page
+
+📄 amazon_automation.log                           ← Detailed logs
+
+
+TROUBLESHOOTING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ "Module not found" error
+   → Run: pip install -r requirements.txt
+
+❌ "Stagehand not found" error
+   → Run: npm install @browserbasehq/stagehand
+
+❌ Login fails / CAPTCHA appears
+   → Amazon detected automation
+   → Try running in non-headless mode
+   → Edit config/settings.py: Set headless: False
+   → You may need to solve CAPTCHA manually
+
+❌ "wkhtmltopdf not found"
+   → Install from: https://wkhtmltopdf.org/downloads.html
+   → Or use: winget install wkhtmltopdf
+
+❌ Browser doesn't open
+   → Check if virtual environment is activated
+   → Check internet connection
+   → Review logs in amazon_automation.log
+
+❌ No orders extracted
+   → Check if you have orders on Amazon
+   → Review screenshots/ folder
+   → Check amazon_automation.log
+
+
+OPTIONAL: Run with Examples
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Try the example script for guided usage:
+   python example_usage.py
+
+Select from menu:
+   1. Basic Usage
+   2. Custom Configuration
+   3. Error Handling
+   4. Step-by-Step Execution
+
+
+CONFIGURATION OPTIONS (config/settings.py):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Customize these settings:
+
+   MAX_ORDERS_TO_SCRAPE = 10          ← Number of orders to fetch
+   
+   STAGEHAND_CONFIG = {
+       'headless': False,              ← Set True to hide browser
+       'enable_caching': True,         ← Cache AI responses
+       'verbose': 1,                   ← Logging level (0-2)
+   }
+
+
+SECURITY REMINDERS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  NEVER commit .env file to git
+⚠️  Keep your Amazon credentials secure
+⚠️  Use strong passwords
+⚠️  Enable 2FA on Amazon account
+⚠️  Review PDF reports before sharing
+
+
+QUICK COMMAND REFERENCE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Setup
+.\scripts\setup.bat
+
+# Activate environment
+.\venv\Scripts\activate
+
+# Run automation
+python src\amazon_automation.py
+
+# Run examples
+python example_usage.py
+
+# View logs
+type amazon_automation.log
+
+# Check output
+dir output\
+dir screenshots\
+
+
+EXPECTED RUNTIME:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+First Run:       ~5-10 minutes (includes setup)
+Subsequent:      ~2-3 minutes per run
+Login:           ~30 seconds
+Order Scraping:  ~1-2 minutes
+PDF Generation:  ~10 seconds
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  Ready to run? Follow the steps above!                                      ║
+║                                                                              ║
+║  Start with: .\scripts\setup.bat                                            ║
+║  Then edit: .env (add your credentials)                                     ║
+║  Finally: python src\amazon_automation.py                                   ║
+║                                                                              ║
+║  Questions? Check README.md or QUICKSTART.md                                ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝

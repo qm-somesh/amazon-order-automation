@@ -2,8 +2,7 @@
 # Author: qm-somesh
 # Date: 2025-10-23
 
-# Core Stagehand AI for browser automation
-stagehand-ai>=0.1.0
+# Note: Stagehand AI is installed via npm, not pip
 
 # PDF generation
 pdfkit>=1.0.0

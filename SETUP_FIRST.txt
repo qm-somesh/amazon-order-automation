@@ -1,0 +1,247 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║               ⚠️  SETUP REQUIRED BEFORE RUNNING AUTOMATION                  ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+CURRENT STATUS CHECK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Node.js: v16.15.1 (INSTALLED)
+❌ Python: NOT FOUND (NEED TO INSTALL)
+❓ wkhtmltopdf: Unknown (will check after Python)
+
+
+WHAT YOU NEED TO DO RIGHT NOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ⚠️  INSTALL PYTHON 3.9 OR HIGHER (REQUIRED)
+2. 📝 ADD YOUR AMAZON CREDENTIALS TO .env FILE
+3. 🔨 INSTALL wkhtmltopdf (FOR PDF REPORTS)
+4. 🚀 RUN THE AUTOMATION
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 1: INSTALL PYTHON (CRITICAL - DO THIS FIRST!)
+═══════════════════════════════════════════════════════════════════════════════
+
+Option A - Using winget (Recommended):
+──────────────────────────────────────────────────────────────────────────────
+
+Open PowerShell and run:
+   winget install Python.Python.3.12
+
+After installation:
+   1. Close and reopen PowerShell
+   2. Verify: python --version
+
+
+Option B - Manual Download:
+──────────────────────────────────────────────────────────────────────────────
+
+1. Go to: https://www.python.org/downloads/
+2. Download Python 3.12 (or 3.9+)
+3. Run installer
+   ⚠️  IMPORTANT: Check "Add Python to PATH" during installation!
+4. Restart PowerShell
+5. Verify: python --version
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 2: CONFIGURE YOUR AMAZON CREDENTIALS
+═══════════════════════════════════════════════════════════════════════════════
+
+The .env.example file is currently open in your editor!
+
+You need to:
+
+1. Create a copy as .env:
+   Run in PowerShell:
+   cd "d:\Info\Learn to Evolve team\AI\amazon-order-automation"
+   Copy-Item .env.example .env
+
+2. Edit the .env file and replace these lines:
+
+   FROM:
+   ──────────────────────────────────────────────────────
+   AMAZON_EMAIL=your_email@example.com
+   AMAZON_PASSWORD=your_secure_password
+   ──────────────────────────────────────────────────────
+
+   TO (with YOUR credentials):
+   ──────────────────────────────────────────────────────
+   AMAZON_EMAIL=youractualemail@gmail.com
+   AMAZON_PASSWORD=YourActualPassword123
+   ──────────────────────────────────────────────────────
+
+3. Save the file
+
+⚠️  SECURITY NOTE: Never share or commit the .env file!
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 3: INSTALL wkhtmltopdf (FOR PDF GENERATION)
+═══════════════════════════════════════════════════════════════════════════════
+
+Option A - Using winget (Easiest):
+──────────────────────────────────────────────────────────────────────────────
+
+   winget install wkhtmltopdf
+
+
+Option B - Manual Download:
+──────────────────────────────────────────────────────────────────────────────
+
+1. Go to: https://wkhtmltopdf.org/downloads.html
+2. Download "wkhtmltox-0.12.6-1.msvc2015-win64.exe"
+3. Install it
+4. Restart PowerShell
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 4: RUN AUTOMATED SETUP
+═══════════════════════════════════════════════════════════════════════════════
+
+After Python is installed, run the setup script:
+
+   cd "d:\Info\Learn to Evolve team\AI\amazon-order-automation"
+   .\scripts\setup.bat
+
+This will automatically:
+   ✅ Create Python virtual environment
+   ✅ Install all Python dependencies (stagehand-ai, pdfkit, etc.)
+   ✅ Install Stagehand AI via npm
+   ✅ Create output directories
+   ✅ Set up project structure
+
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 5: RUN THE AUTOMATION! 🚀
+═══════════════════════════════════════════════════════════════════════════════
+
+Once setup is complete:
+
+   # Activate virtual environment
+   .\venv\Scripts\activate
+
+   # Run the automation
+   python src\amazon_automation.py
+
+
+WHAT WILL HAPPEN:
+──────────────────────────────────────────────────────────────────────────────
+
+1. 🌐 Browser window opens (you'll see it!)
+2. 🤖 Stagehand AI navigates to Amazon India
+3. 🔐 Automatically logs in with your credentials
+4. 📊 Extracts your recent orders using AI
+5. 📄 Generates professional PDF report
+6. 💾 Saves JSON data backup
+7. 📸 Takes screenshots for debugging
+8. ✅ Done!
+
+
+OUTPUT LOCATION:
+──────────────────────────────────────────────────────────────────────────────
+
+📁 output/
+   └── amazon_orders_report_YYYYMMDD_HHMMSS.pdf
+   └── orders_YYYYMMDD_HHMMSS.json
+
+📁 screenshots/
+   └── Various screenshots of the automation process
+
+
+═══════════════════════════════════════════════════════════════════════════════
+COMPLETE COMMAND SEQUENCE (Copy & Paste)
+═══════════════════════════════════════════════════════════════════════════════
+
+# 1. Install Python
+winget install Python.Python.3.12
+
+# 2. Close and reopen PowerShell, then navigate to project
+cd "d:\Info\Learn to Evolve team\AI\amazon-order-automation"
+
+# 3. Create .env file from template
+Copy-Item .env.example .env
+
+# 4. Edit .env file with your Amazon credentials
+notepad .env
+
+# 5. Install wkhtmltopdf
+winget install wkhtmltopdf
+
+# 6. Run setup script
+.\scripts\setup.bat
+
+# 7. Activate virtual environment
+.\venv\Scripts\activate
+
+# 8. Run automation
+python src\amazon_automation.py
+
+
+═══════════════════════════════════════════════════════════════════════════════
+WHAT YOU NEED FROM YOUR END (SUMMARY)
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Node.js v16.15.1 - Already installed!
+
+❌ Python 3.9+ - INSTALL NOW
+   → winget install Python.Python.3.12
+
+📝 Amazon Credentials - YOU NEED TO PROVIDE:
+   → Email/Mobile used for Amazon India login
+   → Password for Amazon account
+   → Add these to .env file
+
+🔨 wkhtmltopdf - INSTALL FOR PDF GENERATION
+   → winget install wkhtmltopdf
+
+⏱️  Time Required:
+   → Installation: ~10 minutes
+   → First run: ~5 minutes
+   → Subsequent runs: ~2-3 minutes
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Issue: Python still not found after installation
+   → Close and reopen PowerShell
+   → Or restart your computer
+   → Check PATH environment variable
+
+Issue: "winget not found"
+   → Update Windows to latest version
+   → Or use manual download links provided above
+
+Issue: Permission errors
+   → Run PowerShell as Administrator
+   → Right-click PowerShell → "Run as Administrator"
+
+Issue: CAPTCHA appears during login
+   → Amazon detected automation
+   → Edit config/settings.py: Set headless: False
+   → Manually solve CAPTCHA when it appears
+
+
+═══════════════════════════════════════════════════════════════════════════════
+NEED HELP?
+═══════════════════════════════════════════════════════════════════════════════
+
+📖 Read README.md for detailed documentation
+📖 Read QUICKSTART.md for quick setup guide
+📖 Check amazon_automation.log for error details
+🐛 Create issue on GitHub if problems persist
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  START HERE: Install Python 3.12                                            ║
+║  Command: winget install Python.Python.3.12                                 ║
+║                                                                              ║
+║  Then: Follow steps 2-8 above                                               ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
