@@ -1,11 +1,11 @@
 """
-Amazon India Order Automation with Stagehand AI
+Amazon India Order Automation with Playwright
 Author: qm-somesh
 Date: 2025-10-23
 
-This script uses Stagehand AI for intelligent browser automation to:
-- Login to Amazon India using natural language commands
-- Extract recent order details using AI-powered extraction
+This script uses Playwright for browser automation to:
+- Login to Amazon India
+- Extract recent order details
 - Generate professional PDF reports
 - Create JSON backups of order data
 """
@@ -20,13 +20,7 @@ from typing import Dict, List, Optional
 
 import pdfkit
 from dotenv import load_dotenv
-
-# Import Stagehand AI (assumed to be installed via npm/pip)
-try:
-    from stagehand import Stagehand
-except ImportError:
-    print("ERROR: Stagehand AI not installed. Run: npm install @browserbasehq/stagehand")
-    exit(1)
+from playwright.async_api import async_playwright, Page, Browser
 
 # Load environment variables
 load_dotenv()
@@ -45,16 +39,14 @@ logger = logging.getLogger(__name__)
 
 class AmazonOrderAutomation:
     """
-    Amazon Order Automation using Stagehand AI for intelligent browser control.
-    
-    Uses natural language commands instead of brittle CSS selectors,
-    making the automation more resilient to UI changes.
+    Amazon Order Automation using Playwright for browser control.
     """
     
     def __init__(self, config: Optional[Dict] = None):
-        """Initialize the automation with Stagehand configuration."""
+        """Initialize the automation with configuration."""
         self.config = config or {}
-        self.stagehand = None
+        self.browser: Optional[Browser] = None
+        self.page: Optional[Page] = None
         self.orders_data = []
         
         # Get credentials from environment
@@ -72,97 +64,103 @@ class AmazonOrderAutomation:
         
         logger.info("AmazonOrderAutomation initialized")
     
-    async def initialize_stagehand(self):
-        """Initialize Stagehand AI browser automation."""
+    async def initialize_browser(self, playwright):
+        """Initialize Playwright browser."""
         try:
-            logger.info("Initializing Stagehand AI...")
+            logger.info("Initializing browser...")
             
-            # Initialize Stagehand with configuration
-            self.stagehand = Stagehand(
-                env="LOCAL",
-                verbose=1,
-                debugDom=True,
+            # Launch browser
+            self.browser = await playwright.chromium.launch(
                 headless=self.config.get('headless', False),
-                enableCaching=self.config.get('enable_caching', True)
+                slow_mo=100  # Slow down by 100ms for stability
             )
             
-            await self.stagehand.init()
-            logger.info("Stagehand AI initialized successfully")
+            # Create context with viewport
+            context = await self.browser.new_context(
+                viewport={'width': 1280, 'height': 720}
+            )
+            
+            # Create page
+            self.page = await context.new_page()
+            logger.info("Browser initialized successfully")
             
         except Exception as e:
-            logger.error(f"Failed to initialize Stagehand: {e}")
+            logger.error(f"Failed to initialize browser: {e}")
             raise
     
     async def login_to_amazon(self) -> bool:
         """
-        Login to Amazon India using natural language commands with Stagehand AI.
+        Login to Amazon India.
         
         Returns:
             bool: True if login successful, False otherwise
         """
         try:
             logger.info("Navigating to Amazon India...")
-            await self.stagehand.page.goto("https://www.amazon.in")
+            await self.page.goto("https://www.amazon.in", wait_until="domcontentloaded", timeout=60000)
+            await asyncio.sleep(2)
             
             # Take screenshot before login
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "01_homepage.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "01_homepage.png"))
             
-            # Use natural language to find and click sign-in button
+            # Click sign-in button
             logger.info("Looking for sign-in button...")
-            await self.stagehand.act("Click on the Sign In button")
+            try:
+                # Try different possible selectors for sign-in
+                await self.page.click("#nav-link-accountList", timeout=10000)
+            except:
+                try:
+                    # Alternative selector
+                    await self.page.click("a[data-nav-role='signin']", timeout=10000)
+                except:
+                    # Another alternative
+                    await self.page.click("text=Sign in", timeout=10000)
             
             # Wait for login page
             await asyncio.sleep(2)
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "02_login_page.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "02_login_page.png"))
             
-            # Enter email using natural language
+            # Enter email
             logger.info("Entering email...")
-            await self.stagehand.act(f"Type '{self.email}' in the email or mobile number field")
-            await self.stagehand.act("Click the Continue button")
+            await self.page.fill("input[type='email'], input[name='email'], #ap_email", self.email, timeout=10000)
+            await self.page.click("input[type='submit'], #continue", timeout=10000)
             
             # Wait for password page
             await asyncio.sleep(2)
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "03_password_page.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "03_password_page.png"))
             
-            # Enter password using natural language
+            # Enter password
             logger.info("Entering password...")
-            await self.stagehand.act(f"Type '{self.password}' in the password field")
-            await self.stagehand.act("Click the Sign In button")
+            await self.page.fill("input[type='password'], input[name='password'], #ap_password", self.password, timeout=10000)
+            await self.page.click("input[type='submit'], #signInSubmit", timeout=10000)
             
             # Wait for login to complete
             await asyncio.sleep(3)
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "04_logged_in.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "04_logged_in.png"))
             
             # Verify login success by checking for account element
-            verification = await self.stagehand.extract(
-                "Find the user account name or 'Hello' greeting in the top navigation"
-            )
-            
-            if verification:
-                logger.info("Login successful!")
-                return True
-            else:
-                logger.warning("Login verification failed")
+            logger.info("Verifying login...")
+            try:
+                # Check if we're logged in by looking for account/hello element
+                account_elem = await self.page.query_selector("#nav-link-accountList")
+                if account_elem:
+                    logger.info("Login successful!")
+                    return True
+                else:
+                    logger.warning("Login verification failed")
+                    return False
+            except:
+                logger.warning("Could not verify login")
                 return False
                 
         except Exception as e:
             logger.error(f"Login failed: {e}")
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "error_login.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "error_login.png"))
             return False
     
     async def scrape_recent_orders(self, max_orders: int = 10) -> List[Dict]:
         """
-        Scrape recent orders using Stagehand AI's intelligent extraction.
+        Scrape recent orders from Amazon.
         
         Args:
             max_orders: Maximum number of orders to scrape
@@ -172,88 +170,115 @@ class AmazonOrderAutomation:
         """
         try:
             logger.info("Navigating to orders page...")
-            await self.stagehand.act("Click on Returns & Orders")
+            
+            # Navigate to orders page
+            try:
+                await self.page.click("#nav-orders", timeout=10000)
+                await asyncio.sleep(2)
+            except:
+                # Alternative: direct URL navigation
+                await self.page.goto("https://www.amazon.in/gp/your-account/order-history", wait_until="domcontentloaded", timeout=60000)
+                await asyncio.sleep(3)
             
             # Wait for orders page to load
-            await asyncio.sleep(3)
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "05_orders_page.png")
-            )
+            await asyncio.sleep(2)
+            await self.page.screenshot(path=str(self.screenshots_dir / "05_orders_page.png"))
             
             logger.info(f"Extracting up to {max_orders} recent orders...")
             
-            # Use Stagehand's AI extraction to get order details
-            # No need for brittle CSS selectors!
-            orders_extraction_prompt = f"""
-            Extract information from the {max_orders} most recent orders on this page.
-            For each order, get:
-            - Order number/ID
-            - Order date
-            - Product name(s)
-            - Total amount/price
-            - Order status (delivered, shipped, etc.)
-            - Delivery date (if available)
+            # Extract order cards
+            order_cards = await self.page.query_selector_all(".order-card, .order")
             
-            Return as a structured list of orders.
-            """
+            if not order_cards:
+                # Try alternative selector
+                order_cards = await self.page.query_selector_all("[data-order-id]")
             
-            extracted_data = await self.stagehand.extract(orders_extraction_prompt)
+            orders_data = []
+            for idx, card in enumerate(order_cards[:max_orders]):
+                try:
+                    order_info = await self._extract_order_info(card, idx + 1)
+                    if order_info:
+                        orders_data.append(order_info)
+                except Exception as e:
+                    logger.warning(f"Failed to extract order {idx + 1}: {e}")
+                    continue
             
-            # Process extracted data
-            if extracted_data:
-                self.orders_data = self._process_extracted_orders(extracted_data)
-                logger.info(f"Successfully extracted {len(self.orders_data)} orders")
-                
-                # Save raw JSON data
+            self.orders_data = orders_data
+            logger.info(f"Successfully extracted {len(self.orders_data)} orders")
+            
+            # Save raw JSON data
+            if self.orders_data:
                 json_path = self.output_dir / f"orders_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
                 with open(json_path, 'w', encoding='utf-8') as f:
                     json.dump(self.orders_data, f, indent=2, ensure_ascii=False)
                 logger.info(f"Saved JSON data to {json_path}")
-                
-                return self.orders_data
-            else:
-                logger.warning("No orders extracted")
-                return []
+            
+            return self.orders_data
                 
         except Exception as e:
             logger.error(f"Failed to scrape orders: {e}")
-            await self.stagehand.page.screenshot(
-                path=str(self.screenshots_dir / "error_scraping.png")
-            )
+            await self.page.screenshot(path=str(self.screenshots_dir / "error_scraping.png"))
             return []
     
-    def _process_extracted_orders(self, extracted_data) -> List[Dict]:
-        """
-        Process and normalize extracted order data.
-        
-        Args:
-            extracted_data: Raw data from Stagehand extraction
+    async def _extract_order_info(self, card, index: int) -> Optional[Dict]:
+        """Extract information from a single order card."""
+        try:
+            # Extract order number
+            order_number = "N/A"
+            order_elem = await card.query_selector(".order-info, [data-order-id], .yohtmlc-order-id")
+            if order_elem:
+                order_text = await order_elem.inner_text()
+                # Extract order number from text
+                if "ORDER" in order_text or "#" in order_text:
+                    order_number = order_text.split()[-1] if order_text else f"ORDER-{index}"
+                else:
+                    order_number = f"ORDER-{index}"
+            else:
+                order_number = f"ORDER-{index}"
             
-        Returns:
-            List of normalized order dictionaries
-        """
-        processed_orders = []
-        
-        # Handle different extraction formats
-        if isinstance(extracted_data, dict):
-            orders_list = extracted_data.get('orders', [extracted_data])
-        elif isinstance(extracted_data, list):
-            orders_list = extracted_data
-        else:
-            orders_list = [extracted_data]
-        
-        for idx, order in enumerate(orders_list):
-            if isinstance(order, dict):
-                processed_order = {
-                    'order_number': order.get('order_number', order.get('order_id', f'ORDER-{idx+1}')),
-                    'order_date': order.get('order_date', 'N/A'),
-                    'product_name': order.get('product_name', order.get('products', 'N/A')),
-                    'total_amount': order.get('total_amount', order.get('price', 'N/A')),
-                    'status': order.get('status', order.get('order_status', 'N/A')),
-                    'delivery_date': order.get('delivery_date', order.get('delivered_on', 'N/A'))
-                }
-                processed_orders.append(processed_order)
-        
+            # Extract date
+            order_date = "N/A"
+            date_elem = await card.query_selector(".order-date, .a-color-secondary")
+            if date_elem:
+                order_date = (await date_elem.inner_text()).strip()
+            
+            # Extract product name
+            product_name = "N/A"
+            product_elem = await card.query_selector(".product-title, .yohtmlc-product-title, a.a-link-normal")
+            if product_elem:
+                product_name = (await product_elem.inner_text()).strip()
+            
+            # Extract amount
+            total_amount = "N/A"
+            amount_elem = await card.query_selector(".order-total, .yohtmlc-order-total, .a-color-price")
+            if amount_elem:
+                total_amount = (await amount_elem.inner_text()).strip()
+            
+            # Extract status
+            status = "N/A"
+            status_elem = await card.query_selector(".order-status, .delivery-box")
+            if status_elem:
+                status = (await status_elem.inner_text()).strip()
+            
+            # Extract delivery date
+            delivery_date = "N/A"
+            delivery_elem = await card.query_selector(".delivery-date, .shipment")
+            if delivery_elem:
+                delivery_date = (await delivery_elem.inner_text()).strip()
+            
+            return {
+                'order_number': order_number,
+                'order_date': order_date,
+                'product_name': product_name,
+                'total_amount': total_amount,
+                'status': status,
+                'delivery_date': delivery_date
+            }
+            
+        except Exception as e:
+            logger.error(f"Error extracting order info: {e}")
+            return None
+    
         return processed_orders
     
     def generate_pdf_report(self, orders: Optional[List[Dict]] = None) -> str:
@@ -277,6 +302,17 @@ class AmazonOrderAutomation:
         # Create HTML content with professional styling
         html_content = self._generate_html_report(orders)
         
+        # Configure wkhtmltopdf path
+        import platform
+        if platform.system() == "Windows":
+            wkhtmltopdf_path = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+            if Path(wkhtmltopdf_path).exists():
+                config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+            else:
+                config = None
+        else:
+            config = None
+        
         # PDF options
         pdf_options = {
             'page-size': 'A4',
@@ -294,7 +330,10 @@ class AmazonOrderAutomation:
         pdf_path = self.output_dir / pdf_filename
         
         try:
-            pdfkit.from_string(html_content, str(pdf_path), options=pdf_options)
+            if config:
+                pdfkit.from_string(html_content, str(pdf_path), options=pdf_options, configuration=config)
+            else:
+                pdfkit.from_string(html_content, str(pdf_path), options=pdf_options)
             logger.info(f"PDF report generated: {pdf_path}")
             return str(pdf_path)
         except Exception as e:
@@ -457,11 +496,13 @@ class AmazonOrderAutomation:
         Args:
             max_orders: Maximum number of orders to scrape
         """
+        playwright = None
         try:
             logger.info("Starting Amazon Order Automation...")
             
-            # Initialize Stagehand
-            await self.initialize_stagehand()
+            # Initialize Playwright
+            playwright = await async_playwright().start()
+            await self.initialize_browser(playwright)
             
             # Login
             login_success = await self.login_to_amazon()
@@ -481,24 +522,31 @@ class AmazonOrderAutomation:
             
         except Exception as e:
             logger.error(f"Automation failed: {e}")
-            if self.stagehand:
-                await self.stagehand.page.screenshot(
-                    path=str(self.screenshots_dir / "error_final.png")
-                )
+            if self.page:
+                await self.page.screenshot(path=str(self.screenshots_dir / "error_final.png"))
             raise
         
         finally:
             # Cleanup
-            if self.stagehand:
+            if self.browser:
                 logger.info("Closing browser...")
-                await self.stagehand.close()
+                await self.browser.close()
+            if playwright:
+                await playwright.stop()
 
 
 async def main():
     """Main entry point."""
-    from config.settings import STAGEHAND_CONFIG, MAX_ORDERS_TO_SCRAPE
+    import sys
+    from pathlib import Path
+    
+    # Add project root to path
+    project_root = Path(__file__).parent.parent
+    sys.path.insert(0, str(project_root))
     
     try:
+        from config.settings import STAGEHAND_CONFIG, MAX_ORDERS_TO_SCRAPE
+        
         automation = AmazonOrderAutomation(config=STAGEHAND_CONFIG)
         await automation.run(max_orders=MAX_ORDERS_TO_SCRAPE)
         
