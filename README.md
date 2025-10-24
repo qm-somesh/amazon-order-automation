@@ -1,50 +1,73 @@
-# 📦 Amazon India Order Automation with Stagehand AI
+# 📦 Amazon India Order Automation - Dual Implementation
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Stagehand AI](https://img.shields.io/badge/Stagehand-AI%20Powered-purple.svg)](https://github.com/browserbase/stagehand)
+[![Playwright](https://img.shields.io/badge/Playwright-Enabled-green.svg)](https://playwright.dev/)
+[![Browser Use AI](https://img.shields.io/badge/Browser%20Use-AI%20Powered-purple.svg)](https://browser-use.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Intelligent browser automation for Amazon India using natural language commands powered by Stagehand AI.**
+**Two powerful automation implementations for extracting Amazon India orders:**
+1. **Playwright** - Fast, traditional browser automation
+2. **Browser Use** - AI-powered natural language automation
 
 *Author: qm-somesh*  
-*Date: 2025-10-23*
+*Date: 2025-10-24*
 
 ---
 
-## 🌟 Why Stagehand Over Playwright?
+## � Choose Your Implementation
 
-| Feature | Stagehand AI | Traditional Playwright |
-|---------|-------------|----------------------|
-| **Selector Management** | ❌ No selectors needed! | ✅ Brittle CSS/XPath selectors |
-| **Commands** | 🤖 Natural language | 💻 Low-level API calls |
-| **UI Changes** | ✅ AI adapts automatically | ❌ Breaks frequently |
-| **Maintenance** | 🚀 Minimal | 😰 Constant updates needed |
-| **Learning Curve** | 📈 Gentle | 📊 Steep |
-| **Code Readability** | ✨ Excellent | 🔍 Technical |
-| **Reliability** | 🎯 High | ⚠️ Medium |
+| Feature | Playwright 🎭 | Browser Use 🤖 |
+|---------|--------------|----------------|
+| **Speed** | ⚡ Very Fast | 🐢 Moderate |
+| **Reliability** | 🔧 Good | 🌟 Excellent |
+| **Maintenance** | 🛠️ High | ✨ Low |
+| **Cost** | � Free | � ~$0.05/run |
+| **Setup** | ✅ Easy | ✅ Easy |
+| **AI-Powered** | ❌ No | ✅ Yes |
+| **Self-Healing** | ❌ No | ✅ Yes |
 
-### Example Comparison
+### Quick Start
 
-**Stagehand AI:**
-```python
-await stagehand.act("Click on the Sign In button")
-await stagehand.act("Type 'user@example.com' in the email field")
+```bash
+# Run Playwright (fast & free)
+python run.py --mode playwright
+
+# Run Browser Use (AI-powered)
+python run.py --mode browseruse
+
+# Run both and compare
+python run.py --mode both
 ```
 
-**Traditional Playwright:**
-```python
-await page.click('xpath=//a[contains(@class, "nav-action-button")]//span[text()="Sign in"]')
-await page.fill('input#ap_email', 'user@example.com')
-# Breaks when Amazon changes their CSS classes or structure!
-```
+---
+
+## 🌟 Why Two Implementations?
+
+### Playwright Version
+**Best for**: Speed, local testing, cost-sensitive scenarios
+- Direct browser control with CSS selectors
+- Fastest execution (~2-3 seconds)
+- No API costs
+- Great for stable websites
+
+### Browser Use Version
+**Best for**: Production, reliability, low maintenance
+- Natural language commands
+- Self-healing when UI changes
+- AI-powered element detection
+- Handles errors automatically
+
+**See detailed comparison**: [COMPARISON.md](COMPARISON.md)
 
 ---
 
 ## 🚀 Features
 
-- 🤖 **AI-Powered Automation**: Use natural language commands instead of brittle selectors
+- 🎭 **Dual Implementation**: Choose between Playwright or Browser Use
+- 🤖 **AI-Powered Option**: Natural language commands (Browser Use)
+- ⚡ **Fast Option**: Direct control with selectors (Playwright)
 - 🔐 **Smart Login**: Automatically logs into Amazon India
-- 📊 **Order Extraction**: Intelligently extracts recent order details
+- 📊 **Order Extraction**: Extracts recent order details
 - 📄 **PDF Reports**: Generates professional, styled PDF reports
 - 💾 **JSON Backup**: Saves raw order data in JSON format
 - 📸 **Error Screenshots**: Captures screenshots on errors for debugging
@@ -123,12 +146,18 @@ chmod +x scripts/setup.sh
 
 ## ⚙️ Configuration
 
-Edit `.env` file with your Amazon credentials:
+Edit `.env` file with your credentials:
 
 ```env
+# Amazon India Credentials
 AMAZON_EMAIL=your_email@example.com
 AMAZON_PASSWORD=your_secure_password
+
+# For Browser Use AI (get free key from: https://aistudio.google.com/apikey)
+GOOGLE_API_KEY=your_google_gemini_api_key_here
 ```
+
+**Note**: The Browser Use implementation requires a Google Gemini API key. Get your free API key from [Google AI Studio](https://aistudio.google.com/apikey).
 
 ### Advanced Configuration
 

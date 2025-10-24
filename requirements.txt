@@ -1,8 +1,14 @@
 # Amazon Order Automation - Python Dependencies
 # Author: qm-somesh
-# Date: 2025-10-23
+# Date: 2025-10-24
+# Updated: Added Browser Use AI for intelligent automation
 
-# Note: Stagehand AI is installed via npm, not pip
+# Browser Automation Options:
+# 1. Playwright - Fast, direct browser control (installed separately)
+# 2. Browser Use - AI-powered natural language automation
+
+# AI Browser Automation
+browser-use>=0.9.0
 
 # PDF generation
 pdfkit>=1.0.0

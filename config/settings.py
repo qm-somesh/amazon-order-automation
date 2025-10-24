@@ -37,7 +37,7 @@ PDF_OPTIONS = {
 }
 
 # Automation Settings
-MAX_ORDERS_TO_SCRAPE = 10  # Maximum number of orders to scrape
+MAX_ORDERS_TO_SCRAPE = 5  # Maximum number of orders to scrape (reduced to avoid rate limits)
 DEFAULT_TIMEOUT = 30000  # Default timeout in milliseconds (30 seconds)
 PAGE_LOAD_TIMEOUT = 60000  # Page load timeout (60 seconds)
 
